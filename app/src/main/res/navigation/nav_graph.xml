@@ -9,7 +9,7 @@
         android:id="@+id/FirstFragment"
         android:name="com.example.zadaniematecki_dziennik.FirstFragment"
         android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first">
+        tools:layout="@layout/informacja_uzytkownik">
 
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"
