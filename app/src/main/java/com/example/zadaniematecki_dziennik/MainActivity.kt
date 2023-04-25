@@ -1,58 +1,89 @@
 package com.example.zadaniematecki_dziennik
 
-import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import android.view.Menu
-import android.view.MenuItem
-import com.example.zadaniematecki_dziennik.databinding.ActivityMainBinding
+import android.os.Bundle
+import android.view.View
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.Toast
+import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity() {
-
-    private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var binding: ActivityMainBinding
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        val tablicaV2 = intent.getStringArrayExtra("Przerzucanie")
+        var zalogowano = false
+        var tablica = arrayOf("","","","")
+        if (tablicaV2!= null){
+            zalogowano=true
+            tablica = tablicaV2
 
-        setSupportActionBar(binding.toolbar)
-
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        appBarConfiguration = AppBarConfiguration(navController.graph)
-        setupActionBarWithNavController(navController, appBarConfiguration)
-
-        binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+            findViewById<LinearLayout>(R.id.Formularz).visibility= View.GONE
         }
-    }
+        supportActionBar?.hide()
+        val navigationView = findViewById<NavigationView>(R.id.nav_view)
+        navigationView.visibility = View.GONE
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
+        findViewById<Button>(R.id.btnwyjdz).setOnClickListener {
+            navigationView.visibility = View.GONE
         }
-    }
 
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
+
+        findViewById<ImageView>(R.id.icon).setOnClickListener {
+            navigationView.visibility = View.VISIBLE
+        }
+
+
+
+        findViewById<Button>(R.id.strgl).setOnClickListener {
+            Toast.makeText(this, "Strona główna jest już otwarta", Toast.LENGTH_SHORT).show()
+        }
+
+
+        findViewById<Button>(R.id.oceny).setOnClickListener {
+            if(zalogowano==true)
+                startActivity(Intent(this, Oceny::class.java).putExtra("Przerzucanie", tablica))
+            else
+                Toast.makeText(this, "Musisz się zalogować", Toast.LENGTH_SHORT).show()
+        }
+
+
+        findViewById<Button>(R.id.inf).setOnClickListener {
+            if(zalogowano==true)
+                startActivity(Intent(this,Informacja_Uzytkownik::class.java).putExtra("Przerzucanie", tablica))
+            else
+                Toast.makeText(this, "Musisz się zalogować", Toast.LENGTH_SHORT).show()
+
+        }
+        findViewById<Button>(R.id.wyslij).setOnClickListener{
+            val imie = findViewById<EditText>(R.id.imie).text.toString()
+            val nazwisko = findViewById<EditText>(R.id.nazwisko).text.toString()
+            val klasa = findViewById<EditText>(R.id.klasa).text.toString()
+            val nick = findViewById<EditText>(R.id.nick).text.toString()
+
+            if (imie.isEmpty() || nazwisko.isEmpty() || klasa.isEmpty() || nick.isEmpty())
+                Toast.makeText(this, "Wypełnij wszystkie pola", Toast.LENGTH_SHORT).show()
+            else if (imie!="Ivan" || nazwisko!="Ovcharuk")
+                Toast.makeText(this, "Niepoprawne dane", Toast.LENGTH_SHORT).show()
+            else {
+                zalogowano = true
+                tablica[0] = imie
+                tablica[1] = nazwisko
+                tablica[2] = klasa
+                tablica[3] = nick
+
+                findViewById<LinearLayout>(R.id.Formularz).visibility= View.GONE
+
+                Toast.makeText(this, "Zalogowano!", Toast.LENGTH_SHORT).show()
+
+            }
+        }
+
+
     }
 }
